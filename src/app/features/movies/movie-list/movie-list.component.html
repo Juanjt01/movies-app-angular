@@ -1,0 +1,74 @@
+<div class="movies-container">
+  
+  <!-- Header con navbar -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <h1>🎬 Pelis Más</h1>
+      <div class="navbar-actions">
+        <span class="welcome-text">Bienvenido, {{ username }}</span>
+        <button class="btn btn-primary" (click)="onCreateMovie()">
+          + Nueva Película
+        </button>
+        <button class="btn btn-outline" (click)="onLogout()">
+          Cerrar Sesión
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="content">
+    
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading">
+      <div class="spinner"></div>
+      <p>Cargando películas...</p>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="errorMessage && !isLoading" class="error-box">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Lista de películas -->
+    <div *ngIf="!isLoading && !errorMessage" class="movies-grid">
+      
+      <!-- Si no hay películas -->
+      <div *ngIf="movies.length === 0" class="empty-state">
+        <h2>No hay películas todavía</h2>
+        <p>Crea tu primera película haciendo clic en "Nueva Película"</p>
+      </div>
+
+      <!-- Cards de películas -->
+      <div *ngFor="let movie of movies" class="movie-card" (click)="onViewMovie(movie.id)">
+        <div class="movie-poster">
+          <img 
+            *ngIf="movie.poster" 
+            [src]="'http://localhost:8000/storage/' + movie.poster" 
+            [alt]="movie.title"
+          />
+          <div *ngIf="!movie.poster" class="no-poster">
+            🎬
+          </div>
+        </div>
+        <div class="movie-info">
+          <h3>{{ movie.title }}</h3>
+          <p class="movie-description">
+            {{ movie.description || 'Sin descripción' }}
+          </p>
+          <div class="movie-status">
+            <span 
+              class="badge" 
+              [class.published]="movie.is_published"
+              [class.draft]="!movie.is_published"
+            >
+              {{ movie.is_published ? 'Publicada' : 'Borrador' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,94 @@
+<div class="create-container">
+  
+  <!-- Header -->
+  <div class="header">
+    <h1>🎬 Nueva Película</h1>
+    <button class="btn-back" (click)="onCancel()">← Volver</button>
+  </div>
+
+  <!-- Formulario -->
+  <div class="form-wrapper">
+    <form (ngSubmit)="onSubmit()">
+      
+      <!-- Título -->
+      <div class="form-group">
+        <label for="title">Título *</label>
+        <input 
+          type="text" 
+          id="title" 
+          class="form-input"
+          [(ngModel)]="title" 
+          name="title"
+          placeholder="Ej: Avatar, Titanic, Matrix..."
+          [disabled]="isLoading"
+          required
+        />
+      </div>
+
+      <!-- Descripción -->
+      <div class="form-group">
+        <label for="description">Descripción</label>
+        <textarea 
+          id="description" 
+          class="form-textarea"
+          [(ngModel)]="description" 
+          name="description"
+          placeholder="Escribe una breve descripción de la película..."
+          rows="5"
+          [disabled]="isLoading"
+        ></textarea>
+      </div>
+
+      <!-- Imagen/Poster -->
+      <div class="form-group">
+        <label for="poster">Poster de la película</label>
+        <input 
+          type="file" 
+          id="poster" 
+          class="form-file"
+          (change)="onFileSelected($event)"
+          accept="image/*"
+          [disabled]="isLoading"
+        />
+        <small class="help-text">Formatos: JPG, JPEG, PNG (máx. 2MB)</small>
+      </div>
+
+      <!-- Preview de la imagen -->
+      <div *ngIf="previewUrl" class="image-preview">
+        <p class="preview-label">Vista previa:</p>
+        <img [src]="previewUrl" alt="Preview" />
+      </div>
+
+      <!-- Mensajes -->
+      <div *ngIf="errorMessage" class="alert alert-error">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="successMessage" class="alert alert-success">
+        ✓ {{ successMessage }}
+      </div>
+
+      <!-- Botones -->
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isLoading"
+        >
+          Cancelar
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="isLoading"
+        >
+          <span *ngIf="!isLoading">Crear Película</span>
+          <span *ngIf="isLoading">Creando...</span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</div>

@@ -1,0 +1,82 @@
+<div class="register-wrapper">
+  <div class="register-box">
+    
+    <!-- Logo/Título -->
+    <div class="register-header">
+      <h1>🎬 Pelis Más</h1>
+    </div>
+
+    <h2 class="register-title">Crear cuenta</h2>
+
+    <!-- Formulario -->
+    <form (ngSubmit)="onRegister()">
+      
+      <!-- Campo Username -->
+      <div class="form-group">
+        <input 
+          type="text" 
+          class="form-input" 
+          id="username" 
+          [(ngModel)]="username" 
+          name="username"
+          placeholder="Usuario"
+          [disabled]="isLoading"
+          required
+        />
+      </div>
+
+      <!-- Campo Password -->
+      <div class="form-group">
+        <input 
+          type="password" 
+          class="form-input" 
+          id="password" 
+          [(ngModel)]="password" 
+          name="password"
+          placeholder="Contraseña"
+          [disabled]="isLoading"
+          required
+        />
+      </div>
+
+      <!-- Campo Confirmar Password -->
+      <div class="form-group">
+        <input 
+          type="password" 
+          class="form-input" 
+          id="confirmPassword" 
+          [(ngModel)]="confirmPassword" 
+          name="confirmPassword"
+          placeholder="Confirmar contraseña"
+          [disabled]="isLoading"
+          required
+        />
+      </div>
+
+      <!-- Mensaje de error -->
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Botón de Register -->
+      <button 
+        type="submit" 
+        class="btn-register"
+        [disabled]="isLoading"
+      >
+        <span *ngIf="!isLoading">Registrarse</span>
+        <span *ngIf="isLoading">Cargando...</span>
+      </button>
+
+    </form>
+
+    <!-- Link a login -->
+    <div class="login-link">
+      <p>
+        ¿Ya tienes cuenta? 
+        <a (click)="onGoToLogin()">Inicia sesión aquí</a>
+      </p>
+    </div>
+
+  </div>
+</div>

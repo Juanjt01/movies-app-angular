@@ -1,0 +1,106 @@
+<div class="edit-container">
+  
+  <!-- Header -->
+  <div class="header">
+    <h1>✏️ Editar Película</h1>
+    <button class="btn-back" (click)="onCancel()">← Volver</button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoadingMovie" class="loading">
+    <div class="spinner"></div>
+    <p>Cargando película...</p>
+  </div>
+
+  <!-- Formulario -->
+  <div *ngIf="!isLoadingMovie" class="form-wrapper">
+    <form (ngSubmit)="onSubmit()">
+      
+      <!-- Título -->
+      <div class="form-group">
+        <label for="title">Título *</label>
+        <input 
+          type="text" 
+          id="title" 
+          class="form-input"
+          [(ngModel)]="title" 
+          name="title"
+          placeholder="Ej: Avatar, Titanic, Matrix..."
+          [disabled]="isLoading"
+          required
+        />
+      </div>
+
+      <!-- Descripción -->
+      <div class="form-group">
+        <label for="description">Descripción</label>
+        <textarea 
+          id="description" 
+          class="form-textarea"
+          [(ngModel)]="description" 
+          name="description"
+          placeholder="Escribe una breve descripción de la película..."
+          rows="5"
+          [disabled]="isLoading"
+        ></textarea>
+      </div>
+
+      <!-- Poster actual -->
+      <div *ngIf="currentPosterUrl && !previewUrl" class="current-poster">
+        <p class="poster-label">Poster actual:</p>
+        <img [src]="currentPosterUrl" alt="Poster actual" />
+      </div>
+
+      <!-- Imagen/Poster -->
+      <div class="form-group">
+        <label for="poster">Cambiar poster (opcional)</label>
+        <input 
+          type="file" 
+          id="poster" 
+          class="form-file"
+          (change)="onFileSelected($event)"
+          accept="image/*"
+          [disabled]="isLoading"
+        />
+        <small class="help-text">Formatos: JPG, JPEG, PNG (máx. 2MB)</small>
+      </div>
+
+      <!-- Preview del nuevo poster -->
+      <div *ngIf="previewUrl" class="image-preview">
+        <p class="preview-label">Nuevo poster:</p>
+        <img [src]="previewUrl" alt="Preview" />
+      </div>
+
+      <!-- Mensajes -->
+      <div *ngIf="errorMessage" class="alert alert-error">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="successMessage" class="alert alert-success">
+        ✓ {{ successMessage }}
+      </div>
+
+      <!-- Botones -->
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isLoading"
+        >
+          Cancelar
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="isLoading"
+        >
+          <span *ngIf="!isLoading">Guardar Cambios</span>
+          <span *ngIf="isLoading">Guardando...</span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</div>

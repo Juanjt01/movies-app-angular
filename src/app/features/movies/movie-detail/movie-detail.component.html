@@ -1,0 +1,165 @@
+<div class="detail-container">
+  
+  <!-- Header -->
+  <div class="header">
+    <button class="btn-back" (click)="onBack()">← Volver a películas</button>
+  </div>
+
+  <!-- Loading película -->
+  <div *ngIf="isLoadingMovie" class="loading">
+    <div class="spinner"></div>
+    <p>Cargando película...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="errorMessage && !isLoadingMovie" class="error-box">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Contenido principal -->
+  <div *ngIf="!isLoadingMovie && movie" class="content">
+    
+    <!-- Información de la película -->
+    <div class="movie-section">
+      <div class="movie-content">
+        <div class="movie-poster-large">
+          <img 
+            *ngIf="movie.poster" 
+            [src]="storageUrl + '/storage/' + movie.poster"
+            [alt]="movie.title"
+          />
+          <div *ngIf="!movie.poster" class="no-poster-large">
+            🎬
+          </div>
+        </div>
+        
+        <div class="movie-details">
+          <h1>{{ movie.title }}</h1>
+          <p class="description">{{ movie.description || 'Sin descripción' }}</p>
+          <div class="status-badge">
+            <span 
+              class="badge" 
+              [class.published]="movie.is_published"
+              [class.draft]="!movie.is_published"
+            >
+              {{ movie.is_published ? 'Publicada' : 'Borrador' }}
+            </span>
+          </div>
+          <!-- Botones de acción -->
+          <div class="movie-actions">
+          <button class="btn-edit" (click)="onEdit()">
+             ✏️ Editar
+           </button>
+           <button class="btn-delete" (click)="onDelete()">
+             🗑️ Eliminar
+           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección de Reviews -->
+    <div class="reviews-section">
+      <h2>Reviews ({{ reviews.length }})</h2>
+
+      <!-- Formulario para crear review -->
+      <div class="review-form">
+        <h3>Escribe tu review</h3>
+        <form (ngSubmit)="onSubmitReview()">
+          
+          <!-- Rating (estrellas) -->
+          <div class="form-group">
+            <label>Calificación:</label>
+            <div class="rating-input">
+              <button 
+                *ngFor="let star of [1,2,3,4,5]" 
+                type="button"
+                class="star-btn"
+                [class.active]="star <= newRating"
+                (click)="newRating = star"
+                [disabled]="isSubmitting"
+              >
+                {{ star <= newRating ? '★' : '☆' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Comentario -->
+          <div class="form-group">
+            <label for="comment">Comentario:</label>
+            <textarea 
+              id="comment"
+              class="form-textarea"
+              [(ngModel)]="newComment"
+              name="comment"
+              placeholder="Escribe tu opinión sobre la película..."
+              rows="4"
+              [disabled]="isSubmitting"
+              required
+            ></textarea>
+          </div>
+
+          <!-- Botón submit -->
+          <button 
+            type="submit" 
+            class="btn-submit"
+            [disabled]="isSubmitting || !newComment.trim()"
+          >
+            <span *ngIf="!isSubmitting">Publicar Review</span>
+            <span *ngIf="isSubmitting">Publicando...</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Loading reviews -->
+      <div *ngIf="isLoadingReviews" class="loading-reviews">
+        <div class="spinner-small"></div>
+        <p>Cargando reviews...</p>
+      </div>
+
+      <!-- Lista de reviews -->
+      <div *ngIf="!isLoadingReviews" class="reviews-list">
+        
+        <!-- Si no hay reviews -->
+        <div *ngIf="reviews.length === 0" class="no-reviews">
+          <p>Aún no hay reviews. ¡Sé el primero en opinar!</p>
+        </div>
+
+        <!-- Review cards -->
+        <div *ngFor="let review of reviews" class="review-card">
+          <div class="review-header">
+            <div class="user-info">
+              <div class="user-avatar">{{ review.user.username.charAt(0).toUpperCase() }}</div>
+              <div>
+                <span class="username">{{ review.user.username }}</span>
+                <span 
+                  *ngIf="review.user.username === currentUsername" 
+                  class="you-badge"
+                >
+                  (Tú)
+                </span>
+              </div>
+            </div>
+            <div class="review-rating">
+              <span 
+                *ngFor="let star of getStars(review.rating)" 
+                class="star"
+                [class.filled]="star"
+              >
+                {{ star ? '★' : '☆' }}
+              </span>
+            </div>
+          </div>
+          
+          <p class="review-comment">{{ review.comment }}</p>
+          
+          <div class="review-footer">
+            <span class="review-date">{{ review.created_at | date:'short' }}</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

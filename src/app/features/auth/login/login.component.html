@@ -1,0 +1,68 @@
+<div class="login-wrapper">
+  <div class="login-box">
+    
+    <!-- Logo/Título -->
+    <div class="login-header">
+      <h1>🎬 Pelis Más</h1>
+    </div>
+
+    <h2 class="login-title">Iniciar sesión</h2>
+
+    <!-- Formulario -->
+    <form (ngSubmit)="onLogin()">
+      
+      <!-- Campo Username -->
+      <div class="form-group">
+        <input 
+          type="text" 
+          class="form-input" 
+          id="username" 
+          [(ngModel)]="username" 
+          name="username"
+          placeholder="Usuario"
+          [disabled]="isLoading"
+          required
+        />
+      </div>
+
+      <!-- Campo Password -->
+      <div class="form-group">
+        <input 
+          type="password" 
+          class="form-input" 
+          id="password" 
+          [(ngModel)]="password" 
+          name="password"
+          placeholder="Contraseña"
+          [disabled]="isLoading"
+          required
+        />
+      </div>
+
+      <!-- Mensaje de error -->
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Botón -->
+      <button 
+        type="submit" 
+        class="btn-submit"
+        [disabled]="isLoading"
+      >
+        <span *ngIf="!isLoading">Siguiente</span>
+        <span *ngIf="isLoading">Cargando...</span>
+      </button>
+
+    </form>
+
+    <!-- Link registro -->
+    <div class="register-link">
+      <p>
+        ¿No tienes cuenta? 
+        <a [routerLink]="['/register']">Regístrate aquí</a>
+      </p>
+    </div>
+
+  </div>
+</div>
