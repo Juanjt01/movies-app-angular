@@ -370,7 +370,7 @@ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 **Juan Terán**
 
 - GitHub: [@Juanjt01](https://github.com/Juanjt01)
-- LinkedIn: [Juan Terán](https://www.linkedin.com/in/juan-jos%C3%A9-ter%C3%A1n-triana-b33924261/)
+- LinkedIn: [Juan Terán](https://www.linkedin.com/in/juan-teran-b208b830b/)
 
 ---
 
