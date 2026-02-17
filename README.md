@@ -1,59 +1,379 @@
-# MoviesApp
+# Movies App - Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.19.
+Aplicación web full-stack para gestión de películas con sistema de reseñas y calificaciones.
 
-## Development server
+[![Angular](https://img.shields.io/badge/Angular-19-DD0031?style=flat&logo=angular)](https://angular.io)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-5-7952B3?style=flat&logo=bootstrap)](https://getbootstrap.com/)
 
-To start a local development server, run:
+## Demo en Vivo
 
+**[Ver Aplicación](https://movies-app-angular-three.vercel.app/)** | **[Ver API](https://movies-api-laravel-production-61fb.up.railway.app)**
+
+---
+
+## Capturas de Pantalla
+
+### Login
+*[Próximamente]*
+
+### Lista de Películas
+*[Próximamente]*
+
+### Detalle y Reviews
+*[Próximamente]*
+
+---
+
+## Características
+
+### Autenticación
+- Login y registro de usuarios
+- Tokens JWT con Laravel Sanctum
+- Protección de rutas con Guards
+- Gestión de sesión persistente
+
+### Gestión de Películas
+- CRUD completo (Crear, Leer, Actualizar, Eliminar)
+- Subida de imágenes para posters
+- Preview de imágenes antes de guardar
+- Validación de formularios en tiempo real
+- Mensajes de éxito y error
+
+### Sistema de Reviews
+- Calificaciones de 1 a 5 estrellas interactivas
+- Comentarios de texto
+- Solo usuarios autenticados pueden opinar
+- Visualización de todas las reviews por película
+- Indicador de review propia con badge "Tú"
+
+### Diseño y UX
+- Interfaz responsive con Bootstrap 5
+- Optimizado para móviles y desktop
+- Gradientes personalizados
+- Animaciones suaves en botones y cards
+- Spinner de carga durante peticiones HTTP
+
+---
+
+## Stack Tecnológico
+
+### Frontend
+- **Angular 19** - Framework JavaScript
+- **TypeScript 5.6** - Lenguaje de programación
+- **RxJS** - Programación reactiva para manejo de observables
+- **Bootstrap 5** - Framework CSS
+- **Angular Router** - Sistema de navegación con guards
+- **FormsModule** - Manejo de formularios template-driven
+- **HTTP Client** - Comunicación con API REST
+
+### Backend
+- **Laravel 11** - API RESTful
+- **MySQL 8** - Base de datos
+- **Laravel Sanctum** - Autenticación
+- **Docker** - Containerización
+
+---
+
+## Arquitectura del Proyecto
+```
+src/app/
+├── core/
+│   ├── guards/
+│   │   └── auth.guard.ts          # Protección de rutas privadas
+│   ├── services/
+│   │   ├── auth.service.ts        # Servicio de autenticación
+│   │   ├── movies.service.ts      # Servicio de películas
+│   │   └── reviews.service.ts     # Servicio de reviews
+│   └── interceptors/              # Interceptores HTTP (futuro)
+├── features/
+│   ├── auth/
+│   │   ├── login/                 # Componente de login
+│   │   └── register/              # Componente de registro
+│   └── movies/
+│       ├── movie-list/            # Listar películas en cards
+│       ├── movie-create/          # Crear película con upload
+│       ├── movie-detail/          # Ver detalles + reviews
+│       └── movie-edit/            # Editar película
+└── shared/                        # Componentes compartidos
+    └── models/                    # Interfaces TypeScript
+```
+
+---
+
+## Instalación y Uso
+
+### Prerrequisitos
+- Node.js 18.19 o superior
+- npm 9 o superior
+- Angular CLI 19
+
+### Instalación Local
 ```bash
+# Clonar repositorio
+git clone https://github.com/Juanjt01/movies-app-angular.git
+cd movies-app-angular
+
+# Instalar dependencias
+npm install
+
+# Servir en desarrollo
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+La aplicación estará disponible en `http://localhost:4200`
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+### Build de Producción
 ```bash
-ng generate component component-name
+# Compilar para producción
+npm run build
+
+# Los archivos compilados estarán en:
+# dist/movies-app/browser
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
+## Configuración
+
+### Variables de Entorno
+
+Para desarrollo local, el proyecto usa un proxy configurado en `proxy.conf.json`:
+```json
+{
+  "/api": {
+    "target": "http://localhost:8000",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/sanctum": {
+    "target": "http://localhost:8000",
+    "secure": false,
+    "changeOrigin": true
+  }
+}
 ```
 
-## Building
+En producción, las URLs se configuran directamente en los componentes mediante la variable `storageUrl`.
 
-To build the project run:
+---
 
-```bash
-ng build
+## Funcionalidades Técnicas
+
+### Guards de Autenticación
+
+Protección de rutas implementada con Angular Guards:
+```typescript
+export const authGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (authService.isAuthenticated()) {
+    return true;
+  } else {
+    router.navigate(['/login']);
+    return false;
+  }
+};
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
+Aplicado en rutas:
+```typescript
+{ 
+  path: 'movies', 
+  component: MovieListComponent,
+  canActivate: [authGuard]
+}
 ```
 
-## Running end-to-end tests
+### Servicios HTTP con Observables
 
-For end-to-end (e2e) testing, run:
+Comunicación con API RESTful mediante RxJS:
+```typescript
+getMovies(): Observable<MoviesResponse> {
+  return this.http.get<MoviesResponse>(`${this.apiUrl}/movies`, {
+    headers: this.getHeaders()
+  });
+}
 
-```bash
-ng e2e
+login(username: string, password: string): Observable<LoginResponse> {
+  return this.http.post<LoginResponse>(`${this.apiUrl}/login`, {
+    username,
+    password
+  }).pipe(
+    tap(response => {
+      if (response.success && response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('username', response.data.username);
+      }
+    })
+  );
+}
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### Manejo de Formularios
 
-## Additional Resources
+Template-driven forms con validación:
+```html
+<form (ngSubmit)="onLogin()">
+  <input 
+    type="text" 
+    [(ngModel)]="username" 
+    name="username"
+    required
+  />
+  <button type="submit" [disabled]="isLoading">
+    Iniciar Sesión
+  </button>
+</form>
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Upload de Imágenes con Preview
+```typescript
+onFileSelected(event: any): void {
+  const file = event.target.files[0];
+  
+  if (file) {
+    this.selectedFile = file;
+
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.previewUrl = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+}
+```
+
+---
+
+## Rutas de la Aplicación
+```typescript
+const routes: Routes = [
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+  { 
+    path: 'movies', 
+    component: MovieListComponent,
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'movies/create', 
+    component: MovieCreateComponent,
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'movies/:id/edit', 
+    component: MovieEditComponent,
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'movies/:id', 
+    component: MovieDetailComponent,
+    canActivate: [authGuard]
+  }
+];
+```
+
+---
+
+## Endpoints de la API Consumidos
+
+### Autenticación
+```
+POST   /api/register    - Registro de usuario
+POST   /api/login       - Inicio de sesión
+POST   /api/logout      - Cierre de sesión
+```
+
+### Películas (Protegidas)
+```
+GET    /api/movies           - Listar películas
+POST   /api/movies           - Crear película
+GET    /api/movies/{id}      - Ver detalle
+PUT    /api/movies/{id}      - Actualizar película
+DELETE /api/movies/{id}      - Eliminar película
+```
+
+### Reviews (Protegidas)
+```
+GET    /api/movies/{id}/reviews    - Listar reviews
+POST   /api/movies/{id}/reviews    - Crear review
+```
+
+---
+
+## Deployment en Vercel
+
+### Configuración
+```json
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/movies-app/browser",
+  "framework": "angular"
+}
+```
+
+### Variables de Entorno en Producción
+Las URLs de la API se configuran directamente en los componentes para simplificar el deployment.
+
+---
+
+## Diseño y Estilos
+
+### Paleta de Colores
+```css
+/* Gradiente principal */
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+/* Colores de estado */
+--primary: #667eea;
+--success: #155724;
+--danger: #dc3545;
+--warning: #856404;
+```
+
+### Componentes Destacados
+- Cards con hover effect y sombras
+- Botones con gradientes y transiciones
+- Formularios con validación visual
+- Spinners de carga animados
+- Badges para estado de publicación
+
+---
+
+## Mejores Prácticas Implementadas
+
+- Separación de responsabilidades (servicios, componentes, guards)
+- Standalone components (Angular 19)
+- Tipado estricto con TypeScript
+- Manejo de errores con try-catch
+- Loading states para mejor UX
+- Mensajes de feedback al usuario
+- Responsive design mobile-first
+- Clean code y nomenclatura consistente
+
+---
+
+## Repositorios Relacionados
+
+- **Backend API Laravel**: [movies-api-laravel](https://github.com/Juanjt01/movies-api-laravel)
+- **Deploy Frontend**: [Vercel](https://movies-app-angular-three.vercel.app/)
+- **Deploy Backend**: [Railway](https://movies-api-laravel-production-61fb.up.railway.app)
+
+---
+
+## Desarrollado Por
+
+**Juan Terán**
+
+- GitHub: [@Juanjt01](https://github.com/Juanjt01)
+- LinkedIn: [Juan Terán](https://www.linkedin.com/in/juan-jos%C3%A9-ter%C3%A1n-triana-b33924261/)
+
+---
+
+## Licencia
+
+Este proyecto fue creado con fines educativos y de demostración de habilidades técnicas.
